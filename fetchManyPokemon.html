@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Fetching Data with JavaScript</title>
+</head>
+<body>
+<h1>Testing JavaScript fetch()</h1>
+<p>This file contains JavaScript for interacting with the Pokemon API. Results will appear below.</p>
+<div id="results"></div>
+<div id="download"></div>
+<script>
+
+// 10 dragons
+let pokelist = [
+  "dratini",
+  "dragonair",
+  "dragonite",
+  "kingdra",
+  "vibrava",
+  "flygon",
+  "altaria",
+  "bagon",
+  "shelgon",
+  "salamence"
+]
+
+
+const fetchMultiple = async (names) => {
+  let jsonArray = []
+  for (name of names){
+     await fetch("https://pokeapi.co/api/v2/pokemon/"+name)
+      .then(response => response.json())
+      .then(data => {  jsonArray.push(data)  })
+  }
+  return jsonArray
+}
+
+const display = (jsonArray) => {
+  for (json of jsonArray){
+    var d = document.createElement("div");
+    d.innerHTML =
+      '<h3>' + json.name + '</h3>' +
+      '<img src="'+ json.sprites.front_default+'" />' +
+      '<p>Height: ' + json.height + '</p>' +
+      '<p>Weight: ' + json.weight + '</p>';
+    document.querySelector('#results').appendChild(d);
+  }
+}
+
+const download = (json) => {
+    var a = document.createElement("a");
+    a.innerHTML = "Download All as JSON";
+    var file = new Blob([JSON.stringify(json)], {type: 'application/json'});
+    a.href = URL.createObjectURL(file);
+    a.download = 'pokemon_data.json';
+    document.querySelector('#download').appendChild(a);
+}
+
+fetchMultiple(pokelist).then(json => {
+  display(json)
+  download(json)
+})
+
+
+</script>
+
+</body>
+</html>
